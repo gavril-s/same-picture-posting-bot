@@ -14,7 +14,7 @@ A Telegram bot that posts a specific picture to a channel at regular intervals. 
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/same-picture-posting-bot.git
+   git clone https://github.com/gavril-s/same-picture-posting-bot.git
    cd same-picture-posting-bot
    ```
 
@@ -33,6 +33,8 @@ A Telegram bot that posts a specific picture to a channel at regular intervals. 
    ```
    pip install -r requirements.txt
    ```
+   
+   This will install python-telegram-bot with the job-queue extra, which is required for scheduling posts.
 
 4. Create a Telegram bot and get your bot token:
    - Talk to [@BotFather](https://t.me/BotFather) on Telegram

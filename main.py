@@ -285,7 +285,12 @@ async def post_scheduled_picture(context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logger.error(f"Error posting scheduled picture: {str(e)}")
 
-def schedule_next_post(application):
+async def schedule_next_post_callback(context: ContextTypes.DEFAULT_TYPE):
+    """Callback to schedule the next post."""
+    application = context.application
+    await schedule_next_post(application)
+
+async def schedule_next_post(application):
     """Schedule the next post based on the config."""
     config = load_config()
     
@@ -316,18 +321,12 @@ def schedule_next_post(application):
     
     # Schedule the next post after this one
     application.job_queue.run_once(
-        lambda context: schedule_next_post(application),
+        schedule_next_post_callback,
         timedelta(seconds=delay + 1)  # Schedule 1 second after posting
     )
 
-def main():
-    """Start the bot."""
-    # Load config
-    config = load_config()
-    
-    # Create the Application
-    application = Application.builder().token(config['bot_token']).build()
-    
+async def setup_and_schedule(application):
+    """Set up the application and schedule the first post."""
     # Add command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("status", status))
@@ -337,7 +336,18 @@ def main():
     application.add_handler(CommandHandler("post", post_now))
     
     # Schedule the first post
-    schedule_next_post(application)
+    await schedule_next_post(application)
+
+def main():
+    """Start the bot."""
+    # Load config
+    config = load_config()
+    
+    # Create the Application
+    application = Application.builder().token(config['bot_token']).build()
+    
+    # Set up post-init callback to schedule the first post
+    application.post_init = setup_and_schedule
     
     # Run the bot
     application.run_polling()

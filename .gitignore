@@ -40,5 +40,4 @@ config.json
 
 # Default pictures
 # Uncomment the following line if you want to ignore the pictures directory
-pictures/
-
+# pictures/
